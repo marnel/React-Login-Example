@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, StyleSheet, ActivityIndicator, Keyboard } from 'react-native';
 
 export default class Login extends React.Component {
       
@@ -31,17 +31,19 @@ export default class Login extends React.Component {
                 <TextInput style={styles.textInput} placeholder='Username'
                         onChangeText={(username) => this.setState({username})}
                         underlineColorAndroid='transparent'
+                        editable={!this.state.animating}
                 />
                 <TextInput style={styles.textInput} placeholder='Password'
                         onChangeText={(password) => this.setState({password})}
                         underlineColorAndroid='transparent'
+                        editable={!this.state.animating}
                 />
               
                 <View style={styles.activityIndicator}>
                 {  this.state.animating ?  <ActivityIndicator style={{padding: 20}} size = 'large' color = 'black'/> : null  }
                 </View>
  
-                <TouchableOpacity style={styles.btn} onPress={this.login}>
+                <TouchableOpacity style={styles.btn} onPress={this.login} disabled={this.state.animating}>
                     <Text>Log in</Text>
                 </TouchableOpacity>
             </View>
@@ -52,6 +54,7 @@ export default class Login extends React.Component {
   login = () => {
       var self = this;
       this.setState({animating: true})
+      Keyboard.dismiss()
       fetch('https://dev.coras.com/OAuth/Token',{
           method: 'POST',
           headers: {
@@ -62,16 +65,15 @@ export default class Login extends React.Component {
       })
       .then((response) => response.json())
       .then((res) => {
-          alert(JSON.stringify(res))
           if (res.error){
               alert('Invalid Login!!')
           }
           else {
-            self.props.navigation.navigate('Profile')
+            self.props.navigation.navigate('Profile', { access_token: res.access_token })
           } 
           self.setState({animating: false})
       })
-
+      .done()
   }
 }
 

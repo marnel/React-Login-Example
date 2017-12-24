@@ -8,6 +8,7 @@ export default class Login extends React.Component {
     return (
     <View style={styles.container}>
         <Text style={styles.header}> - Profile - </Text>
+        <Text>{this.getUserName()}</Text>
         <TouchableOpacity style={styles.btn} onPress={this.logout}>
             <Text>Log Out</Text>
         </TouchableOpacity>
@@ -16,8 +17,36 @@ export default class Login extends React.Component {
   }
 
   logout = () => {
-      alert('logout')
       this.props.navigation.navigate('Home')
+  }
+
+  getUserName = () => {
+    let self = this;
+    fetch('https://dev.coras.com/odata/Users?_=1514151757386',{
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;odata.metadata=minimal',
+            'AppId': 'cd57ab8b-e226-44fb-89d9-c7eb571ae864',
+            'Authorization': 'Bearer ' + this.props.navigation.state.params.access_token
+        },
+        
+    })
+    .then((response) => response.json())
+    .then((res) => {
+        alert(res)
+        //if (res.error){
+        //    alert('Error!!!')
+        //    return null
+       // }
+        //else {
+        //  return res.DisplayName
+        //} 
+        return ''
+    })
+    .done(() => {
+        self.setState({animating: false})
+    })
   }
 }
 
