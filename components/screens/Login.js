@@ -1,13 +1,14 @@
 import React from 'react';
-import { Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native';
+import { Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, StyleSheet, ActivityIndicator } from 'react-native';
 
 export default class Login extends React.Component {
-  
+      
     constructor(props) {
         super(props)
         this.state = {
             username: '',
             password: '',
+            animating: false,
         }
     }
 
@@ -23,29 +24,54 @@ export default class Login extends React.Component {
     }
     
     render() {
-    return (
-      <KeyboardAvoidingView behavior='padding' style={styles.wrapper}>
-        <View style={styles.container}>
-            <Text style={styles.header}> - LOGIN - </Text>
-            <TextInput style={styles.textInput} placeholder='Username'
-                       onChangeText={(username) => this.setState({username})}
-                       underlineColorAndroid='transparent'
-            />
-            <TextInput style={styles.textInput} placeholder='Password'
-                       onChangeText={(password) => this.setState({password})}
-                       underlineColorAndroid='transparent'
-            />
-            <TouchableOpacity style={styles.btn} onPress={this.login}>
-                <Text>Log in</Text>
-            </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
+        return (
+        <KeyboardAvoidingView behavior='padding' style={styles.wrapper}>
+            <View style={styles.container}>
+                <Text style={styles.header}> - LOGIN - </Text>
+                <TextInput style={styles.textInput} placeholder='Username'
+                        onChangeText={(username) => this.setState({username})}
+                        underlineColorAndroid='transparent'
+                />
+                <TextInput style={styles.textInput} placeholder='Password'
+                        onChangeText={(password) => this.setState({password})}
+                        underlineColorAndroid='transparent'
+                />
+              
+ 
+                {  this.state.animating ?  <ActivityIndicator style={{padding: 20}} size = 'large' color = 'white'/> : null  }
+                
+ 
+                <TouchableOpacity style={styles.btn} onPress={this.login}>
+                    <Text>Log in</Text>
+                </TouchableOpacity>
+            </View>
+        </KeyboardAvoidingView>
     );
   }
 
   login = () => {
-      alert('test');
-      this.props.navigation.navigate('Profile');
+      var self = this;
+      this.setState({animating: true})
+      fetch('https://dev.coras.com/OAuth/Token',{
+          method: 'POST',
+          headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'username=' + this.state.username + '&password=' + this.state.password + '&grant_type=password'
+      })
+      .then((response) => response.json())
+      .then((res) => {
+          alert(JSON.stringify(res))
+          if (res.error){
+              alert('Invalid Login!!')
+          }
+          else {
+            self.props.navigation.navigate('Profile')
+          } 
+          self.setState({animating: false})
+      })
+
   }
 }
 
@@ -77,6 +103,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#01c853',
         padding: 20,
         alignItems: 'center',
-    }
+    },
+    activityIndicator: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 80
+     }
 })
 
