@@ -37,9 +37,9 @@ export default class Login extends React.Component {
                         underlineColorAndroid='transparent'
                 />
               
- 
-                {  this.state.animating ?  <ActivityIndicator style={{padding: 20}} size = 'large' color = 'white'/> : null  }
-                
+                <View style={styles.activityIndicator}>
+                {  this.state.animating ?  <ActivityIndicator style={{padding: 20}} size = 'large' color = 'black'/> : null  }
+                </View>
  
                 <TouchableOpacity style={styles.btn} onPress={this.login}>
                     <Text>Log in</Text>
@@ -105,9 +105,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     activityIndicator: {
-        justifyContent: 'center',
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
         alignItems: 'center',
-        height: 80
+        justifyContent: 'center'
      }
 })
 
