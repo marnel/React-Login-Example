@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native';
 
-export default class Login extends React.Component {
+export default class Profile extends React.Component {
   
     
     render() {
